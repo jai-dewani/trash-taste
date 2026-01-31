@@ -64,3 +64,4 @@ htmlcov/
 go.work
 vendor/
 
+data/trash_taste.db

@@ -41,8 +41,8 @@ def download_transcript(video_id, output_dir):
         return False
 
 def main():
-    videos_file = "data/videos.json"
-    output_dir = "data/transcripts"
+    videos_file = "../data/videos.json"
+    output_dir = "../data/transcripts"
     
     os.makedirs(output_dir, exist_ok=True)
     

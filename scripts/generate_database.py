@@ -129,6 +129,23 @@ def populate_database(conn: sqlite3.Connection, transcripts_dir: str, videos_met
         # Get episode metadata
         metadata = videos_metadata.get(episode_id, {})
         
+        # Extract thumbnail URL from nested thumbnails object
+        thumbnail_url = ''
+        thumbnails = metadata.get('thumbnails', {})
+        if thumbnails:
+            # Prefer high quality, fall back to medium, then default
+            if 'maxres' in thumbnails:
+                thumbnail_url = thumbnails['maxres'].get('url', '')
+            if 'high' in thumbnails:
+                thumbnail_url = thumbnails['high'].get('url', '')
+            elif 'medium' in thumbnails:
+                thumbnail_url = thumbnails['medium'].get('url', '')
+            elif 'default' in thumbnails:
+                thumbnail_url = thumbnails['default'].get('url', '')
+        # Fallback for other formats
+        if not thumbnail_url:
+            thumbnail_url = metadata.get('thumbnail_url', '')
+        
         # Insert episode
         cursor.execute('''
             INSERT OR REPLACE INTO episodes (id, title, description, published_at, channel_id, channel_title, thumbnail_url)
@@ -140,7 +157,7 @@ def populate_database(conn: sqlite3.Connection, transcripts_dir: str, videos_met
             metadata.get('published_at') or metadata.get('publishedAt', ''),
             metadata.get('channel_id') or metadata.get('channelId', ''),
             metadata.get('channel_title') or metadata.get('channelTitle', ''),
-            metadata.get('thumbnail_url') or metadata.get('thumbnail', {}).get('url', '') if isinstance(metadata.get('thumbnail'), dict) else metadata.get('thumbnail', '')
+            thumbnail_url
         ))
         
         # Load and insert transcript segments
@@ -174,13 +191,13 @@ def populate_database(conn: sqlite3.Connection, transcripts_dir: str, videos_met
 def main():
     # Define paths
     base_dir = Path(__file__).parent.parent
-    db_path = base_dir / 'scripts' / 'data' / 'trash_taste.db'
-    transcripts_dir = base_dir / 'scripts' / 'data' / 'transcripts'
-    videos_json_path = base_dir / 'scripts' / 'data' / 'videos.json'
+    db_path = base_dir / 'data' / 'trash_taste.db'
+    transcripts_dir = base_dir / 'data' / 'transcripts'
+    videos_json_path = base_dir / 'data' / 'videos.json'
     
     # Ensure data directory exists
     db_path.parent.mkdir(parents=True, exist_ok=True)
-    
+
     # Remove existing database if present (for clean rebuild)
     if db_path.exists():
         os.remove(db_path)
