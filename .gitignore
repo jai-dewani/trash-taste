@@ -67,3 +67,4 @@ vendor/
 data/trash_taste.db
 *.pem
 .env.production
+*bucket-policy.json
