@@ -64,7 +64,7 @@ htmlcov/
 go.work
 vendor/
 
-data/trash_taste.db
+backend/trash_taste.db
 *.pem
 .env.production
 *bucket-policy.json
