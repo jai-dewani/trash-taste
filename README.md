@@ -145,6 +145,32 @@ cd frontend
 npm install
 npm run dev
 ```
+The frontend starts on `http://localhost:5173`
+
+## 🐳 Docker Setup
+
+### Using Docker Compose
+
+Start both backend and frontend with a single command:
+
+```bash
+docker-compose up
+```
+
+This will:
+- Build and run the Go backend on `http://localhost:8080`
+- Build and run the React frontend on `http://localhost:5173`
+- Set up the SQLite database automatically
+
+To stop the services:
+
+```bash
+docker-compose down
+```
+
+## 📊 Data Pipeline
+
+
 
 The frontend starts on `http://localhost:5173`
 
@@ -152,15 +178,8 @@ The frontend starts on `http://localhost:5173`
 
 To fetch fresh data from YouTube:
 
-### 1. Set Up Environment
 
-Create a `.env` file in the `scripts/` directory:
-
-```env
-YOUTUBE_DATA_API_V3=your_api_key_here
-```
-
-### 2. Fetch Video Metadata
+### 1. Fetch Video Metadata
 
 ```bash
 python fetch_videos.py
@@ -168,7 +187,7 @@ python fetch_videos.py
 
 This fetches all videos from the Trash Taste channel and saves them to `data/videos.json`.
 
-### 3. Download Transcripts
+### 2. Download Transcripts
 
 ```bash
 python download_transcript.py
@@ -176,7 +195,7 @@ python download_transcript.py
 
 Downloads auto-generated transcripts for each video to `data/transcripts/`.
 
-### 4. Generate Database
+### 3. Generate Database
 
 ```bash
 python generate_database.py
